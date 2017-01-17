@@ -1,0 +1,49 @@
+{% extends 'product/base.html' %}
+{% load static %}
+{% block title %}Products{% endblock %}
+{% block extended_head %}
+    <script src="{% static 'product/js/jquery.cookie.js' %}"></script>
+    <script src="{% static 'product/js/products.js' %}"></script>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-0">
+            {% include 'product/auth.html' %}
+            <select class="form-control">
+                <option value="-created_at">Sort by date &darr;</option>
+                <option value="-like_count">Sort by like &darr;</option>
+            </select>
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+            <div id="products">
+                {% for product in object_list %}
+                    <div class="well">
+                        <h3><a href="{% url 'product_slug'  product.slug %}">{{ product.name|upper }}</a></h3>
+                        <p>Price: {{ product.price }} USD</p>
+                        <p>{{ product.short_description }}</p>
+                        <p class="price">Like: {{ product.like_count }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if is_paginated %}
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4"></div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                        <ul class="pagination">
+                            {% for page_iter in paginator.page_range %}
+                                {% if page_iter != page_obj.number %}
+                                    <li class="active"><a href="{% url 'products_page' page_iter %}">{{ page_iter }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="disabled"><span>{{ page_iter }}<span
+                                            class="sr-only">(current)</span></span></li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4"></div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

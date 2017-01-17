@@ -1,0 +1,10 @@
+<ul class="nav nav-pills nav-stacked" style="margin-bottom: 5px">
+    <li role="presentation"><a class="btn btn-default" href="{% url 'products' %}">Home</a></li>
+    <li role="presentation">
+        {% if request.user.is_authenticated %}
+            <a class="btn btn-default" href="{% url 'logout' %}">Logout<br>{{ request.user.username }}</a>
+        {% else %}
+            <a class="btn btn-default" href="{% url 'login' %}">Sign in</a>
+        {% endif %}
+    </li>
+</ul>

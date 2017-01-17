@@ -1,0 +1,51 @@
+{% extends 'product/base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-0">
+            {% include 'product/auth.html' %}
+            {% if messages %}
+                {% for message in  messages %}
+                    <div
+                            {% if message.tags == 'success' %}
+                                class="alert alert-success"
+                            {% elif message.tags == 'error' %}
+                                class="alert alert-danger"
+                            {% endif %}
+                                role="alert" style="margin: 5px">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 well">
+            <h1>{{ product.name }}</h1>
+            <h3>Price: {{ product.price }} USD</h3>
+            <p>{{ product.description }}</p>
+            <a class="btn btn-default" href="{%  url 'like' product.slug %}" role="button">{{ product.like_count }} Like</a>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-0">
+            <div>
+                <h4>Leave a Comment:</h4>
+                <form class="form-group" action="{% url 'add_comment' product.slug %}" method="post">
+                    {% csrf_token %}
+                    <textarea class="form-control" rows="3" name="text"></textarea>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 5px">Submit</button>
+                </form>
+            </div>
+            {% if comments %}
+                <div class="panel panel-default">
+                    {% for c in comments %}
+                        <div class="panel-heading">
+                            <strong>{{ c.email }}</strong> <span class="text-muted">{{ c.created_at }}</span>
+                        </div>
+                        <div class="panel-body">
+                            {{ c.text }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <h3 style="color: grey; text-align: center">Product does not have comments</h3>
+            {% endif %}
+        </div>
+    </div>
+    </div>
+{% endblock %}
