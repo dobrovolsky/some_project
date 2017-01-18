@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from django.urls import reverse
 
-from product.models import Product, Comment
+from .models import Product, Comment
 
 
 class ProductAdmin(admin.ModelAdmin):

@@ -1,11 +1,11 @@
 from django.contrib import auth
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, RedirectView
 
-from product.models import Product, Comment
+from .models import Product, Comment
 
 
 class ProductListView(ListView):
@@ -86,14 +86,15 @@ class LoginView(View):
         return render(request, 'product/login_page.html')
 
 
-class LogoutView(View):
+class LogoutView(RedirectView):
     """
     handler logout
     """
+    url = reverse_lazy('products')
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         auth.logout(request)
-        return redirect('products')
+        return super(LogoutView, self).get(request, *args, **kwargs)
 
 
 class LikeView(View):
