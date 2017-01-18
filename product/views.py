@@ -3,8 +3,9 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, ListView, RedirectView
+from django.views.generic import DetailView, ListView, RedirectView, CreateView
 
+from .forms import CommentForm
 from .models import Product, Comment
 
 
@@ -42,24 +43,21 @@ class ProductDetailView(DetailView):
         return context
 
 
-class CommentView(View):
+class CommentView(CreateView):
     """
     handler adding comment
     """
+    model = Comment
+    form_class = CommentForm
 
-    def post(self, request, **kwargs):
-        # Get text from form.
-        form_text = request.POST.get('text', '')
-        if form_text != '':
-            product = get_object_or_404(Product, slug=kwargs['slug'])
-            # Create new Comment object.
-            Comment.objects.add_comment(comment_text=form_text, product=product)
-            messages.success(request, 'Thank you for comment')
-        else:
-            # If text is show message that fill is empty.
-            messages.error(request, 'You must fill field')
-        # Refresh page
-        return redirect(reverse('product_slug', args=[kwargs['slug']]))
+    def form_valid(self, form):
+        self.success_url = reverse('product_slug', args=[form.cleaned_data['product_id'].slug])
+        messages.success(self.request, 'Thank you for comment')
+        return super(CommentView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'You must fill field')
+        return redirect(reverse('product_slug', args=[form.cleaned_data['product_id'].slug]))
 
 
 class LoginView(View):

@@ -28,6 +28,7 @@
                 <form class="form-group" action="{% url 'add_comment' product.slug %}" method="post">
                     {% csrf_token %}
                     <textarea class="form-control" rows="3" name="text"></textarea>
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
                     <button type="submit" class="btn btn-primary" style="margin-top: 5px">Submit</button>
                 </form>
             </div>

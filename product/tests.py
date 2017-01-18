@@ -45,7 +45,7 @@ class ProductTest(TestCase):
         """
         Add valid comment.
         """
-        data = {'text': 'The test message'}
+        data = {'text': 'The test message', 'product_id': 13}
         # Try to add valid comment.
         response = self.client.post(reverse('add_comment', args=[self.product.slug]), data, follow=True)
         # response.context['comments'][0] return last added comment.
@@ -55,7 +55,7 @@ class ProductTest(TestCase):
         """
         Add not valid comment.
         """
-        data = {'text': ''}
+        data = {'text': '', 'product_id': 13}
         # Try to add not valid comment.
         response = self.client.post(reverse('add_comment', args=[self.product.slug]), data, follow=True)
         # If comment didn't add to db, response.context['comments'] will be empty.
