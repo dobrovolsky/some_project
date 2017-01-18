@@ -77,7 +77,7 @@ class LoginView(FormView):
 
     def form_invalid(self, form):
         messages.error(self.request, 'You made mistake, try again')
-        return redirect('products')
+        return redirect('login')
 
 
 class LogoutView(RedirectView):
