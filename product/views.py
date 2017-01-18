@@ -1,9 +1,9 @@
-from django.contrib import auth
-from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import auth, messages
+from django.contrib.auth.forms import AuthenticationForm
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, ListView, RedirectView, CreateView
+from django.views.generic import DetailView, ListView, RedirectView, CreateView, FormView
 
 from .forms import CommentForm
 from .models import Product, Comment
@@ -15,7 +15,7 @@ class ProductListView(ListView):
     """
     template_name = 'product/products.html'
     paginate_by = 5
-    context_object_name = 'object_list'
+    context_object_name = 'product_list'
 
     def get_queryset(self):
         """
@@ -39,7 +39,7 @@ class ProductDetailView(DetailView):
         Add comments to context
         """
         context = super(ProductDetailView, self).get_context_data(**kwargs)
-        context['comments'] = Comment.objects.recently_added(product=context[self.context_object_name])
+        context['comments'] = Comment.objects.recently_added(product=self.object)
         return context
 
 
@@ -47,10 +47,14 @@ class CommentView(CreateView):
     """
     handler adding comment
     """
-    model = Comment
     form_class = CommentForm
 
     def form_valid(self, form):
+        """
+        Add message and success_url
+        :param form:
+        :return:
+        """
         self.success_url = reverse('product_slug', args=[form.cleaned_data['product_id'].slug])
         messages.success(self.request, 'Thank you for comment')
         return super(CommentView, self).form_valid(form)
@@ -60,28 +64,20 @@ class CommentView(CreateView):
         return redirect(reverse('product_slug', args=[form.cleaned_data['product_id'].slug]))
 
 
-class LoginView(View):
+class LoginView(FormView):
     """
     handler login
     """
+    form_class = AuthenticationForm
+    template_name = 'product/login_page.html'
 
-    def post(self, request):
-        username = request.POST.get('username', '')
-        password = request.POST.get('password', '')
-        # Return user if it is exist.
-        user = auth.authenticate(username=username, password=password)
-        # If user exist login user and redirect to 'products' page.
-        if request.user.is_authenticated:
-            return redirect('products')
-        if user is not None:
-            auth.login(request, user)
-            return redirect('products')
-        # If user doesn't exist show message error and reload page.
-        messages.error(request, 'You made mistake, try again')
-        return self.get(request)
+    def form_valid(self, form):
+        auth.login(self.request, form.get_user())
+        return redirect('products')
 
-    def get(self, request):
-        return render(request, 'product/login_page.html')
+    def form_invalid(self, form):
+        messages.error(self.request, 'You made mistake, try again')
+        return redirect('products')
 
 
 class LogoutView(RedirectView):
@@ -100,9 +96,9 @@ class LikeView(View):
     handler adding and removing like
     """
 
-    def get(self, request, **kwargs):
+    def post(self, request):
         if request.user.is_authenticated():
-            product = get_object_or_404(Product, slug=kwargs['slug'])
+            product = get_object_or_404(Product, id=request.POST['product_id'])
             # Change like. If like was - delete, if not - add.
             product.change_state_like(request.user.id)
             messages.success(request, 'Like changed')
@@ -110,4 +106,4 @@ class LikeView(View):
             # If user doesn't authenticate show the messages error.
             messages.error(request, 'You have to sing in for doing this action')
         # Refresh page.
-        return redirect(reverse('product_slug', args=[kwargs['slug']]))
+        return redirect(reverse('product_slug', args=[request.POST['slug']]))

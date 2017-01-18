@@ -18,10 +18,10 @@ from . import views
 
 urlpatterns = [
     url(r'^(?P<page>[0-9]+)', views.ProductListView.as_view(), name='products_page'),
-    url(r'^add_comment/(?P<slug>[\w-]+)', views.CommentView.as_view(), name='add_comment'),
+    url(r'^add_comment', views.CommentView.as_view(), name='add_comment'),
     url(r'login', views.LoginView.as_view(), name='login'),
     url(r'logout', views.LogoutView.as_view(), name='logout'),
-    url(r'like/(?P<slug>[\w-]+)', views.LikeView.as_view(), name='like'),
+    url(r'like', views.LikeView.as_view(), name='like'),
     url(r'^(?P<slug>[-\w]+)', views.ProductDetailView.as_view(), name='product_slug'),
     url(r'^', views.ProductListView.as_view(), name='products'),
 ]

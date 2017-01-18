@@ -16,7 +16,7 @@
         </div>
         <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
             <div id="products">
-                {% for product in object_list %}
+                {% for product in product_list %}
                     <div class="well">
                         <h3><a href="{% url 'product_slug'  product.slug %}">{{ product.name|upper }}</a></h3>
                         <p>Price: {{ product.price }} USD</p>

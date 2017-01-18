@@ -25,8 +25,9 @@ class ProductTest(TestCase):
         Add like if user is not authenticated.
         """
         like_before = self.product.like_count
-        self.client.get(reverse('like', args=[self.product.slug]), follow=True)
-        like_after = Product.objects.get(pk=13).like_count
+        data = {'product_id': self.product.id, 'slug': self.product.slug}
+        self.client.post(reverse('like'), data, follow=True)
+        like_after = Product.objects.get(pk=self.product.id).like_count
         # If user doesn't login like_before and like_after must be identical.
         self.assertEqual(like_before == like_after, True)
 
@@ -36,8 +37,9 @@ class ProductTest(TestCase):
         """
         like_before = self.product.like_count
         self.client.login(username='username', password='password')
-        self.client.get(reverse('like', args=[self.product.slug]), follow=True)
-        like_after = Product.objects.get(pk=13).like_count
+        data = {'product_id': self.product.id, 'slug': self.product.slug}
+        self.client.post(reverse('like'), data, follow=True)
+        like_after = Product.objects.get(pk=self.product.id).like_count
         # If user login like_before != like_after after response.
         self.assertEqual(like_before == like_after, False)
 
@@ -47,7 +49,7 @@ class ProductTest(TestCase):
         """
         data = {'text': 'The test message', 'product_id': 13}
         # Try to add valid comment.
-        response = self.client.post(reverse('add_comment', args=[self.product.slug]), data, follow=True)
+        response = self.client.post(reverse('add_comment'), data, follow=True)
         # response.context['comments'][0] return last added comment.
         self.assertEqual(response.context['comments'][0].text, data['text'])
 
@@ -57,6 +59,6 @@ class ProductTest(TestCase):
         """
         data = {'text': '', 'product_id': 13}
         # Try to add not valid comment.
-        response = self.client.post(reverse('add_comment', args=[self.product.slug]), data, follow=True)
+        response = self.client.post(reverse('add_comment'), data, follow=True)
         # If comment didn't add to db, response.context['comments'] will be empty.
         self.assertEqual(list(response.context['comments']), [])
