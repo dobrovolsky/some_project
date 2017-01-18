@@ -15,7 +15,7 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     like_count = models.PositiveIntegerField(default=0)
-    user_id = models.ManyToManyField(User)
+    user_id = models.ManyToManyField(User, db_index=True)
 
     def __str__(self):
         return self.name
