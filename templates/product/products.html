@@ -1,10 +1,11 @@
-{% extends 'product/base.html' %}
+{% extends 'base.html' %}
 {% load static %}
-{% block title %}Products{% endblock %}
-{% block extended_head %}
+{% block title %}Products{% endblock title %}
+{% block head_include %}
+    {{ block.super }}
     <script src="{% static 'product/js/jquery.cookie.js' %}"></script>
     <script src="{% static 'product/js/products.js' %}"></script>
-{% endblock %}
+{% endblock head_include %}
 {% block content %}
     <div class="row">
         <div class="col-lg-2 col-md-2 col-sm-2 col-xs-0">
@@ -46,4 +47,4 @@
             {% endif %}
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

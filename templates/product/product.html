@@ -1,20 +1,10 @@
-{% extends 'product/base.html' %}
-{% block title %}{{ product.name }}{% endblock %}
+{% extends 'base.html' %}
+{% block title %}{{ product.name }}{% endblock title %}
 {% block content %}
     <div class="row">
         <div class="col-lg-2 col-md-2 col-sm-2 col-xs-0">
             {% include 'product/auth.html' %}
-            {% if messages %}
-                {% for message in  messages %}
-                    <div
-                            {% if message.tags == 'success' %}
-                                class="alert alert-success"
-                            {% elif message.tags == 'error' %}
-                                class="alert alert-danger"
-                            {% endif %}
-                                role="alert" style="margin: 5px">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
+            {% include 'product/message.html' %}
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 well">
             <h1>{{ product.name }}</h1>
@@ -54,4 +44,4 @@
         </div>
     </div>
     </div>
-{% endblock %}
+{% endblock content %}

@@ -1,0 +1,11 @@
+{% if messages %}
+    {% for message in  messages %}
+        <div
+                {% if message.tags == 'success' %}
+                    class="alert alert-success"
+                {% elif message.tags == 'error' %}
+                    class="alert alert-danger"
+                {% endif %}
+                    role="alert" style="margin: 5px">{{ message }}</div>
+    {% endfor %}
+{% endif %}
