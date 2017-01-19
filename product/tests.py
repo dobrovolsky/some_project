@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 
 class ProductTest(TestCase):
-    fixtures = ['data.json', ]
+    fixtures = ['data2.json', ]
 
     def setUp(self):
         self.client = Client()
@@ -24,10 +24,10 @@ class ProductTest(TestCase):
         """
         Add like if user is not authenticated.
         """
-        like_before = self.product.like_count
+        like_before = self.product.user_id.count()
         data = {'product_id': self.product.id, 'slug': self.product.slug}
         self.client.post(reverse('like'), data, follow=True)
-        like_after = Product.objects.get(pk=self.product.id).like_count
+        like_after = Product.objects.get(pk=self.product.id).user_id.count()
         # If user doesn't login like_before and like_after must be identical.
         self.assertEqual(like_before == like_after, True)
 
@@ -35,11 +35,11 @@ class ProductTest(TestCase):
         """
         Add like if user is not authenticated.
         """
-        like_before = self.product.like_count
+        like_before = self.product.user_id.count()
         self.client.login(username='username', password='password')
         data = {'product_id': self.product.id, 'slug': self.product.slug}
         self.client.post(reverse('like'), data, follow=True)
-        like_after = Product.objects.get(pk=self.product.id).like_count
+        like_after = Product.objects.get(pk=self.product.id).user_id.count()
         # If user login like_before != like_after after response.
         self.assertEqual(like_before == like_after, False)
 

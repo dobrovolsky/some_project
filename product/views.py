@@ -1,5 +1,6 @@
 from django.contrib import auth, messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
@@ -22,7 +23,8 @@ class ProductListView(ListView):
         Changed queryset for sorting objects
         """
         sort_mode = self.request.COOKIES.get('sort', '-created_at')
-        sorted_products = Product.objects.all().order_by(sort_mode)
+        sorted_products = Product.objects.prefetch_related('user_id').annotate(like_count=Count('user_id')).order_by(
+            sort_mode)
         return sorted_products
 
 

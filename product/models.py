@@ -14,7 +14,6 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    like_count = models.PositiveIntegerField(default=0)
     user_id = models.ManyToManyField(User, db_index=True)
 
     def __str__(self):
@@ -41,12 +40,9 @@ class Product(models.Model):
         """
         liked = self.user_id.filter(id=user_id)
         if not liked.exists():
-            self.like_count += 1
             self.user_id.add(user_id)
         else:
-            self.like_count -= 1
             self.user_id.remove(user_id)
-        self.save()
 
 
 class CommentQuerySet(models.QuerySet):
