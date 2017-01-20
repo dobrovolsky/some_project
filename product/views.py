@@ -25,6 +25,8 @@ class ProductListView(ListView):
         sort_mode = self.request.COOKIES.get('sort', '-created_at')
         sorted_products = Product.objects.prefetch_related('user_id').annotate(like_count=Count('user_id')).order_by(
             sort_mode)
+        [s for s in sorted_products]  # Queries the database and cache query
+        # Paginate object doesn't need to execute query COUNT(*)
         return sorted_products
 
 
